@@ -1,0 +1,1 @@
+import{n as e,r as t}from"./course-DexY29n5.js";import{G as n,X as r,dt as i,tt as a}from"./index-CUsMfzvo.js";var o=r({__name:`SelectView`,setup(r){return(r,o)=>(a(),n(t,{type:`Select`,onSubmit:i(e)},null,8,[`onSubmit`]))}});export{o as default};

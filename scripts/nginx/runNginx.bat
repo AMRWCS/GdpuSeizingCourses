@@ -1,0 +1,6 @@
+@echo off
+cd ..\..\static\gdpu-seizing-courses-nginx
+echo Nginx Initializing...
+start nginx
+echo Nginx Running...
+pause
