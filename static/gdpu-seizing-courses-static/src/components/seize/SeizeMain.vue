@@ -92,6 +92,7 @@ async function handleSubmit() {
   //发送请求
   try {
     console.log(`开始发送请求: ${props.type}`)
+    ElMessage('Handling... (Respond within 45s at most)')
     const res = await props.onSubmit(dataDTO)
     const { data } = res.data
     const jxbIds = data?.jxbIds
@@ -160,7 +161,7 @@ async function handleSubmit() {
 .title {
   text-align: center;
   font-weight: bold;
-  font-size: 50px;
+  font-size: 2.94vw; /* 原 50px   */
   border-bottom: 3px solid #000;
 }
 
@@ -168,13 +169,13 @@ async function handleSubmit() {
   text-align: center;
   font-style: italic;
   color: #5c5c5c;
-  margin: 10px 0;
+  margin: 1.07vh 0; /* 原 10px 0   */
 }
 
 .formList {
   display: flex;
   flex-direction: column;
-  gap: 50px;
+  gap: 5.35vh; /* 原 50px   */
 }
 
 .input-group {
@@ -185,7 +186,7 @@ async function handleSubmit() {
 
 .formType {
   font-weight: bold;
-  font-size: 32px;
+  font-size: 1.88vw; /* 原 32px   */
   grid-column: 1 / -1;
 }
 
@@ -197,10 +198,35 @@ async function handleSubmit() {
 .btns {
   display: flex;
   justify-content: space-between;
-  margin: 40px 190px 40px 200px;
+  margin: 4.28vh 11.18vw 4.28vh 11.77vw; /* 原 40px 190px 40px 200px   */
 }
 
 .el-button {
-  height: 40px;
+  height: 4.28vh; /* 原 40px   */
+}
+
+/*
+  原内容：
+  无
+  响应式内容：
+*/
+@media (max-width: 768px) {
+  .title {
+    font-size: 28px;
+  }
+  .formType {
+    font-size: 16px;
+  }
+  .input-group {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .btns {
+    margin: 24px 16px;
+    gap: 16px;
+  }
+  .el-button {
+    height: 30px;
+  }
 }
 </style>

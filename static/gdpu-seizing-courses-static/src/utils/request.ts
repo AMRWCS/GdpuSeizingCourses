@@ -4,7 +4,7 @@ const baseURL = 'http://localhost:80/api'
 
 export const request = axios.create({
   baseURL,
-  timeout: 10000,
+  timeout: 45000,
 })
 
 export interface Result<T = null> {
@@ -27,8 +27,8 @@ request.interceptors.response.use(
   //错误回调：404/500/网络错误/超时/服务未启动
   (err) => {
     if (err.response?.status === 404) {
-      console.error(`Connection failed (404)：${err.message || 'Network Error'}`)
-      ElMessage.error('Connection failed (404)：Network Error')
+      console.error(`Connection failed (404)： ${err.message || 'Network Error'}`)
+      ElMessage.error('Connection failed (404)： Network Error')
     } else {
       console.error(`Service Error: ${err.message || 'Unknown'}`)
       ElMessage.error('Service Error: Unknown')

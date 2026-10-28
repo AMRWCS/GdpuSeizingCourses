@@ -1,7 +1,7 @@
 <div align="center">
 
 <h1>GdpuSeizingCourses</h1>
-<h2>v0.1</h2>
+<h2>v0.2</h2>
 
 A powerful tool to help you seize courses.<br><br>
 

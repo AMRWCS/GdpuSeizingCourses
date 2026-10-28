@@ -49,20 +49,20 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 80px 0 20px;
+  padding: 7vh 0 2.14vh; /* 原 80px 0 20px   */
   text-align: center;
 }
 
 .title {
-  font-size: 100px;
+  font-size: 5.88vw; /* 原 100px   */
   margin: 0;
   text-shadow: 4px 4px #ccc;
 }
 
 .subtitle {
   width: 100%;
-  font-size: 50px;
-  margin: 20px 0;
+  font-size: 2.94vw; /* 原 50px   */
+  margin: 2.14vh 0; /* 原 20px 0   */
   padding: 0 var(--lr-align-padding);
   font-style: italic;
 }
@@ -96,21 +96,29 @@
 .features {
   display: flex;
   justify-content: center;
-  margin: 20px 0;
+  margin: 2.14vh 0; /* 原 20px 0   */
   padding: 0 var(--lr-align-padding);
 }
 
 .featureList {
   width: 100%;
   display: flex;
-  gap: var(--feature-box-width);
   justify-content: center;
+
+  /*
+  原内容：
+  gap: var(--feature-box-width);
+  响应式内容：
+*/
+  column-gap: var(--feature-box-width);
+  row-gap: clamp(16px, 3vw, 250px);
+  flex-wrap: wrap;
 }
 
 .feature {
   width: var(--feature-box-width);
-  height: var(--feature-box-height);
-  padding: 32px 24px;
+  /*height: var(--feature-box-height); */
+  padding: 3.42vh 1.41vw; /* 原 32px 24px   */
   background: #e368ff;
   border-radius: 8px;
   text-align: center;
@@ -118,18 +126,57 @@
   transition: 0.5s;
 
   h3 {
-    margin: 0 0 40px;
-    font-size: 30px;
+    margin: 0 0 4.28vh; /* 原 0 0 40px   */
+    font-size: 1.77vw; /* 原 30px   */
   }
 
   p {
     margin: 0;
-    font-size: 18px;
+    font-size: 1.06vw; /* 原 18px   */
     font-weight: bolder;
   }
 
   &:hover {
     transform: scale(1.05);
+  }
+
+  /*
+  原内容：
+  无
+  响应式内容：
+*/
+  aspect-ratio: 250 / 230;
+}
+
+/*
+  原内容：
+  无
+  响应式内容：
+*/
+@media (max-width: 768px) {
+  .hero {
+    padding: 4vh 0 2.14vh; /* 原 80px 0 20px   */
+  }
+  .title {
+    font-size: 28px;
+  }
+  .subtitle {
+    font-size: 18px;
+  }
+  .subtitle p {
+    text-align: center;
+  }
+  .feature h3 {
+    font-size: 20px;
+    margin-bottom: 16px;
+  }
+  .feature p {
+    font-size: 14px;
+  }
+  .feature {
+    max-width: 100%;
+    height: 180px;
+    aspect-ratio: auto;
   }
 }
 </style>

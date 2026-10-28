@@ -20,7 +20,7 @@ public class RestClientConfig {
     public RestClient restClient(RestClient.Builder builder) {
         SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
         factory.setConnectTimeout(5000);   // 连接超时（毫秒）
-        factory.setReadTimeout(60000);      // 读取超时（毫秒）
+        factory.setReadTimeout(10000);      // 读取超时（毫秒）
         return builder
                 .requestInterceptor((request, body, execution) -> {
                     log.info("========== 请求报文 ==========");

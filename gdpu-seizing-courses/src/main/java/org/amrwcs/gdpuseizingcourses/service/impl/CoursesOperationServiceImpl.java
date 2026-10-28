@@ -17,6 +17,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClient;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
@@ -49,8 +50,8 @@ public class CoursesOperationServiceImpl implements CoursesOperationService {
         //组装选课请求体表单
         MultiValueMap<String, String> form = buildSelectForm(chooseCourseDTO);
 
-        //发送选课请求
-        String resp = postForm(URLConstant.SEIZE_COURSES_URL, form, chooseCourseDTO.getCookie());
+        //发送选课请求（写操作，不自动重试，避免重复选课）
+        String resp = postForm(URLConstant.SEIZE_COURSES_URL, form, chooseCourseDTO.getCookie(), false);
 
         //解析结果
         parseResponse(resp,true);
@@ -77,8 +78,8 @@ public class CoursesOperationServiceImpl implements CoursesOperationService {
         //组装退课请求体表单
         MultiValueMap<String, String> form = buildRemoveForm(cancelCourseDTO);
 
-        //发送退课请求
-        String resp=postForm(URLConstant.REMOVE_COURSES_URL,form,cancelCourseDTO.getCookie());
+        //发送退课请求（写操作，不自动重试，避免重复退课）
+        String resp=postForm(URLConstant.REMOVE_COURSES_URL,form,cancelCourseDTO.getCookie(),false);
 
         //解析结果
         parseResponse(resp,false);
@@ -105,8 +106,8 @@ public class CoursesOperationServiceImpl implements CoursesOperationService {
         form.add("kklxdm", jxbIdsRequest.getKklxdm());
         form.add("xkkz_id", jxbIdsRequest.getXkkzId());
 
-        //发送jxb_ids请求
-        String resp=postForm(URLConstant.GET_JXBID_URL,form,cookie);
+        //发送jxb_ids请求（只读操作，可重试）
+        String resp=postForm(URLConstant.GET_JXBID_URL,form,cookie,true);
 
         //解析结果
         log.info("开始解析jxb_ids响应");
@@ -149,33 +150,55 @@ public class CoursesOperationServiceImpl implements CoursesOperationService {
         return form;
     }
 
-    //发送请求
-    private String postForm(String url, MultiValueMap<String, String> form, Cookie cookie) {
+    //最多尝试请求次数（首次 + 2次重试）
+    private static final int MAX_ATTEMPTS = 3;
+    //重试退避基础间隔（毫秒），按次数递增：1s、2s
+    private static final long RETRY_DELAY_MS = 1000;
 
-        log.info("开始发送请求：{}", url);
-        
-        String result=restClient.post()
-                .uri(URLConstant.BASE_URL+url)
-                .headers(headers -> {
-                    headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-                    headers.set("X-Requested-With","XMLHttpRequest");
-                    headers.set("Cookie", "route=" + cookie.getRoute() + ";" + "JSESSIONID=" + cookie.getJSESSIONID());
-                })
-                .body(form)
-                .retrieve()
-                //响应901时抛出'登录状态失效：Cookie失效'错误
-                .onStatus(status -> status.value() == 901, (request, response) -> {
-                    throw new CookieExpiredException(MessageConstant.COOKIE_EXPIRED_ERROR);
-                })
-                //响应4xx、5xx时抛出'教务请求失败'错误
-                .onStatus(HttpStatusCode::isError, (request, response) -> {
-                    throw new ServerResponseException(MessageConstant.RESPONSE_ERROR + ": status="+response.getStatusCode());
-                })
-                .body(String.class);
-        
-        log.info("成功接收响应：{}",result);
-        
-        return result;
+    //发送请求（retriable即是否超时重试，仅用于只读操作，如获取jxbIds）
+    private String postForm(String url, MultiValueMap<String, String> form, Cookie cookie, boolean retriable) {
+
+        for (int attempt=1;;attempt++) {
+            try {
+                log.info("开始发送请求（第{}次尝试）：{}", attempt, url);
+
+                String result = restClient.post()
+                        .uri(URLConstant.BASE_URL + url)
+                        .headers(headers -> {
+                            headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+                            headers.set("X-Requested-With", "XMLHttpRequest");
+                            headers.set("Cookie", "route=" + cookie.getRoute() + ";" + "JSESSIONID=" + cookie.getJSESSIONID());
+                        })
+                        .body(form)
+                        .retrieve()
+                        //响应901时抛出'登录状态失效：Cookie失效'错误
+                        .onStatus(status -> status.value() == 901, (request, response) -> {
+                            throw new CookieExpiredException(MessageConstant.COOKIE_EXPIRED_ERROR);
+                        })
+                        //响应4xx、5xx时抛出'教务请求失败'错误
+                        .onStatus(HttpStatusCode::isError, (request, response) -> {
+                            throw new ServerResponseException(MessageConstant.RESPONSE_ERROR + ": status=" + response.getStatusCode());
+                        })
+                        .body(String.class);
+
+                log.info("成功接收响应：{}", result);
+                return result;
+
+            } catch (ResourceAccessException e) {
+                //仅对超时/连接类异常重试；业务失败与Cookie过期不进入此处，直接向上抛出
+                log.warn("请求超时或连接异常（第{}次尝试失败）：{}", attempt, e.getMessage());
+                if (!retriable || attempt >= MAX_ATTEMPTS) {
+                    throw new ServerResponseException(MessageConstant.RESPONSE_ERROR+": Connection Timeout");
+                }
+                try {
+                    //递增退避：第1次失败后等1s，第2次失败后等2s
+                    Thread.sleep(RETRY_DELAY_MS * attempt);
+                } catch (InterruptedException ie) {
+                    Thread.currentThread().interrupt();
+                    throw new ServerResponseException(MessageConstant.SERVER_UNKNOWN_ERROR);
+                }
+            }
+        }
     }
 
     //解析选课、退课响应结果

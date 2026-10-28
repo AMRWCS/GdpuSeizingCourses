@@ -1,10 +1,10 @@
 :root {
-  --nav-height: 72px;
-  --content-max-width: 1436px;
-  --page-padding: 77px;
-  --feature-box-width: 250px;
-  --feature-box-height: 230px;
-  --lr-align-padding: 215px;
+  --nav-height: 7.7vh; /* 原 72px   */
+  --content-max-width: 84.5vw; /* 原 1436px */
+  --page-padding: 4.53vw; /* 原 77px   */
+  --feature-box-width: clamp(200px, 14.71vw, 280px); /* 原 250px  */
+  /* --feature-box-height: 230px; */
+  --lr-align-padding: 12.65vw; /* 原 215px  */
   --header-bg: #0061f4;
   --header-border: #2e6da4;
   --radius-rounded: 9999px;
@@ -13,8 +13,8 @@
   --color-text-primary: #f7f8f8;
   --anchor-glass-bg: #ffffff14;
   --color-border-primary: #23252a;
-  --seize-button-height: 71px;
-  --seize-button-width: 142px;
+  /* --seize-button-height: 71px; */
+  --seize-button-width: 8.36vw; /* 原 142px  */
   --box-shadow: 10px 10px 10px 0 #00000040;
 }
 
@@ -24,4 +24,14 @@ html {
 
 button {
   cursor: pointer;
+}
+
+/*
+  原内容：
+  无
+  响应式内容：
+*/
+html,
+body {
+  overflow-x: hidden; /* 永不出现横向滚动条 */
 }

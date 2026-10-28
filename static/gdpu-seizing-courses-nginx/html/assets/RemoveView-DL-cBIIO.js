@@ -1,0 +1,1 @@
+import{r as e,t}from"./course-CnrbN08w.js";import{G as n,X as r,dt as i,tt as a}from"./index-CJQ1Qk6f.js";var o=r({__name:`RemoveView`,setup(r){return(r,o)=>(a(),n(e,{type:`Remove`,onSubmit:i(t)},null,8,[`onSubmit`]))}});export{o as default};

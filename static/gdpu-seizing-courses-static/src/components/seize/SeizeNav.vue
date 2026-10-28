@@ -9,22 +9,19 @@
 
 <style scoped lang="scss">
 .seizeBtns {
-  height: 330px;
+  height: 35.28vh; /* 原 330px   */
   display: flex;
   flex-direction: column;
   justify-content: space-between;
 }
 
 .linkBtn {
-  height: var(--seize-button-height);
   width: var(--seize-button-width);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: larger;
 
   background: #4197fa;
-  border: 10px solid #e368ff;
   border-radius: var(--radius-rounded);
   font-weight: bold;
   box-shadow: var(--box-shadow);
@@ -38,6 +35,39 @@
 
   &:not(.active):hover {
     transform: scale(1.1);
+  }
+
+  // 原内容：
+  //height: var(--seize-button-height);
+  //font-size: larger;
+  //border: 10px solid #e368ff;
+  // 响应式内容：
+  box-sizing: border-box;
+  aspect-ratio: 2 / 1;
+  border: clamp(6px, 0.6vw, 10px) solid #e368ff;
+  white-space: nowrap;
+  overflow: hidden;
+  font-size: clamp(10px, 1.3vw, 24px);
+}
+
+/*
+  原内容：
+  无
+  响应式内容：
+*/
+@media (max-width: 768px) {
+  .seizeBtns {
+    height: auto;
+    flex-direction: row;
+    justify-content: center;
+    margin: 16px 0;
+    gap: 40px;
+  }
+  .linkBtn {
+    width: 100px;
+    padding: 0 20px;
+    border-width: 6px;
+    font-size: 16px;
   }
 }
 </style>

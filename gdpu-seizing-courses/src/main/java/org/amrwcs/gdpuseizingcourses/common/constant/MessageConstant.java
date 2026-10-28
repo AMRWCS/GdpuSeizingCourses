@@ -8,4 +8,6 @@ public class MessageConstant {
     public static final String COOKIE_EXPIRED_ERROR="Invalid Login Status: Cookie expired";
     //教务响应异常
     public static final String RESPONSE_ERROR="Administration System Error";
+    //服务未知异常
+    public static final String SERVER_UNKNOWN_ERROR="Server Unknown Error";
 }

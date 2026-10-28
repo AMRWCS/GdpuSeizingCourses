@@ -1,0 +1,1 @@
+import{n as e,r as t}from"./course-CnrbN08w.js";import{G as n,X as r,dt as i,tt as a}from"./index-CJQ1Qk6f.js";var o=r({__name:`SelectView`,setup(r){return(r,o)=>(a(),n(t,{type:`Select`,onSubmit:i(e)},null,8,[`onSubmit`]))}});export{o as default};
