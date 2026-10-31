@@ -12,3 +12,7 @@
 
 - Added a **timeout retry mechanism** on the backend: jxb_ids retrieval automatically retries up to 3 times
 - Added **responsive layout** on the frontend to adapt to devices with different aspect ratios
+
+### v1.0 (10.31)
+
+- Added **Submit Loading** on the frontend to avoid clicking too often

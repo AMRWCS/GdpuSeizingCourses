@@ -52,7 +52,15 @@ function handleReset() {
   formData.value = createDefaultForm()
 }
 
+const submitting = ref(false)
+
+let cooldownTimer: number | undefined
+
 async function handleSubmit() {
+  if (submitting.value) {
+    return
+  }
+
   //非空校验
   const emptyFields = Object.entries(formData.value)
     .filter(([, value]) => value === '' || value === null || value === undefined)
@@ -68,6 +76,12 @@ async function handleSubmit() {
     )
     return
   }
+
+  submitting.value = true
+
+  cooldownTimer = window.setTimeout(() => {
+    submitting.value = false
+  }, 5000)
 
   //组装表单
   const jxbIds = localStorage.getItem('jxbIds')
@@ -105,6 +119,12 @@ async function handleSubmit() {
     ElMessage.success('Operation Success!')
   } catch {
     console.error('响应已拦截')
+  } finally {
+    if (cooldownTimer !== undefined) {
+      window.clearTimeout(cooldownTimer)
+      cooldownTimer = undefined
+    }
+    submitting.value = false
   }
 }
 </script>
@@ -152,7 +172,7 @@ async function handleSubmit() {
           <el-button type="primary">Reset</el-button>
         </template>
       </el-popconfirm>
-      <el-button type="primary" @click="handleSubmit">Submit</el-button>
+      <el-button type="primary" :loading="submitting" @click="handleSubmit">Submit</el-button>
     </div>
   </div>
 </template>
